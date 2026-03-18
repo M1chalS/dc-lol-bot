@@ -1,0 +1,9 @@
+.idea
+node_modules/
+.env
+data/
+*.db
+*.db-shm
+*.db-wal
+npm-debug.log*
+.claude
