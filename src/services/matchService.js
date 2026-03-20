@@ -38,6 +38,7 @@ function processMatch(matchDetails, puuid) {
       cs: (participant.totalMinionsKilled || 0) + (participant.neutralMinionsKilled || 0),
       vision_score: participant.visionScore,
       game_duration: info.gameDuration, // seconds
+      queue_id: info.queueId,
       timestamp: info.gameEndTimestamp || info.gameCreation,
     };
   } catch (err) {
@@ -61,7 +62,7 @@ async function syncUserMatches(user) {
 
   try {
     // Fetch up to 20 recent ranked match IDs from Riot
-    const matchIds = await riotApi.getMatchIds(puuid, 20);
+    const matchIds = await riotApi.getMatchIds(puuid, 100);
 
     if (!matchIds || matchIds.length === 0) {
       console.log(`[matchService] No match IDs returned for ${displayName}`);

@@ -83,7 +83,7 @@ async function getPuuidByRiotId(gameName, tagLine) {
  */
 async function getMatchIds(puuid, count = 20) {
   const url = `${REGIONAL_BASE}/lol/match/v5/matches/by-puuid/${encodeURIComponent(puuid)}/ids`;
-  return apiGet(url, { count, queue: 420 }); // 420 = Solo/Duo ranked; remove queue filter if you want all modes
+  return apiGet(url, { count });
 }
 
 /**

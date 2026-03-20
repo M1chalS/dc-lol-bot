@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import useRiotMatchConstants from "../hooks/useRiotMatchConstants.js";
+import { formatChampionName } from '../utils/championName.js';
 
 const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion';
 const DDRAGON_LOADING = 'https://ddragon.leagueoflegends.com/cdn/img/champion/loading';
@@ -29,6 +31,8 @@ export default function Player() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const matchConstants = useRiotMatchConstants();
 
   useEffect(() => {
     fetch(`/api/stats/${discordId}`)
@@ -62,7 +66,7 @@ export default function Player() {
         )}
         <div>
           <div className="player-title">{user.game_name}<span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>#{user.tag_line}</span></div>
-          {favoriteChampion && <div className="player-sub">Ulubiony: {favoriteChampion}</div>}
+          {favoriteChampion && <div className="player-sub">Ulubiony: {formatChampionName(favoriteChampion)}</div>}
         </div>
       </div>
 
@@ -105,8 +109,9 @@ export default function Player() {
           <div className="match-list">
             {recentMatches.map((m) => (
               <div key={m.id} className={`match-row ${m.win ? 'win-row' : 'loss-row'}`}>
+                <span className="meta">{matchConstants.length > 0 ? matchConstants.find((data) => data.queueId === m.queue_id).description : m.queue_id}</span>
                 <span className={`result-badge ${m.win ? 'win' : 'loss'}`}>{m.win ? 'Wygrana' : 'Przegrana'}</span>
-                <span className="champ-name">{m.champion}</span>
+                <span className="champ-name">{formatChampionName(m.champion)}</span>
                 <span className="kda">{m.kills}/{m.deaths}/{m.assists}</span>
                 <span className="meta">CS {m.cs}</span>
                 <span className="meta">{Math.round(m.damage / 1000)}k dmg</span>

@@ -24,7 +24,7 @@ app.get('/api/stats/:discordId', (req, res) => {
   if (!user) return res.status(404).json({ error: 'User not found' });
 
   const stats = db.getStats(user.puuid) || {};
-  const matches = db.getMatchesByPuuid(user.puuid, 20);
+  const matches = db.getMatchesByPuuid(user.puuid, 100);
   const favoriteChampion = statsService.getFavoriteChampion(user.puuid);
   const streak = statsService.getWinLossStreak(user.puuid);
 

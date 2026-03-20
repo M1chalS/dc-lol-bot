@@ -12,7 +12,7 @@ const db = require('../db/database');
  * @returns {object|null}  The calculated stats object, or null if no matches
  */
 function calculateStats(puuid) {
-  const matches = db.getMatchesByPuuid(puuid, 20);
+  const matches = db.getMatchesByPuuid(puuid, 100);
 
   if (!matches || matches.length === 0) return null;
 
@@ -47,7 +47,7 @@ function calculateStats(puuid) {
  * @returns {string|null}
  */
 function getFavoriteChampion(puuid) {
-  const matches = db.getMatchesByPuuid(puuid, 20);
+  const matches = db.getMatchesByPuuid(puuid, 100);
 
   if (!matches || matches.length === 0) return null;
 
@@ -67,7 +67,7 @@ function getFavoriteChampion(puuid) {
  * @returns {number}
  */
 function getWinLossStreak(puuid) {
-  const matches = db.getMatchesByPuuid(puuid, 20);
+  const matches = db.getMatchesByPuuid(puuid, 100);
 
   if (!matches || matches.length === 0) return 0;
 
@@ -127,7 +127,7 @@ function getRankings() {
   // Build enriched user entries
   const enriched = users.map((user) => {
     const stats = db.getStats(user.puuid) || {};
-    const matches = db.getMatchesByPuuid(user.puuid, 20);
+    const matches = db.getMatchesByPuuid(user.puuid, 100);
 
     const totalDeaths = matches.reduce((sum, m) => sum + (m.deaths || 0), 0);
     const avgVision = matches.length
@@ -155,11 +155,13 @@ function getRankings() {
     };
   });
 
+  const get = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
+
   const sortDesc = (arr, key) =>
-    [...arr].sort((a, b) => (b[key] ?? -Infinity) - (a[key] ?? -Infinity));
+    [...arr].sort((a, b) => (get(b, key) ?? -Infinity) - (get(a, key) ?? -Infinity));
 
   const sortAsc = (arr, key) =>
-    [...arr].sort((a, b) => (a[key] ?? Infinity) - (b[key] ?? Infinity));
+    [...arr].sort((a, b) => (get(a, key) ?? Infinity) - (get(b, key) ?? Infinity));
 
   return {
     // Standard ranked categories

@@ -1,6 +1,8 @@
 'use strict';
 
 const { EmbedBuilder } = require('discord.js');
+const { getQueueDescription } = require("../utils/queueConstants");
+const { formatChampionName } = require('../utils/championName');
 
 // ─── Colour palette ────────────────────────────────────────────────────────
 const COLOR = {
@@ -50,7 +52,7 @@ function medal(index) {
 // ─── Command handlers ──────────────────────────────────────────────────────
 
 /**
- * !add <gameName#tagLine>
+ * /lol add <gameName#tagLine>
  * Register a Riot account for the calling Discord user.
  */
 async function handleAdd(message, args, { db, riotApi }) {
@@ -58,7 +60,7 @@ async function handleAdd(message, args, { db, riotApi }) {
 
   if (!input || !input.includes('#')) {
     return message.reply({
-      embeds: [errorEmbed('Usage: `!add GameName#TAG`\nExample: `!add Faker#T1`')],
+      embeds: [errorEmbed('Usage: `/lol add GameName#TAG`\nExample: `/lol add Faker#T1`')],
     });
   }
 
@@ -123,7 +125,7 @@ async function handleStats(message, args, { db, statsService }) {
 
   if (!user || !user.puuid) {
     const hint = target.id === message.author.id
-      ? 'Use `!add GameName#TAG` to link your Riot account first.'
+      ? 'Use `/lol add GameName#TAG` to link your Riot account first.'
       : `${target.username} hasn't linked a Riot account yet.`;
     return message.reply({ embeds: [errorEmbed(hint)] });
   }
@@ -137,7 +139,7 @@ async function handleStats(message, args, { db, statsService }) {
   const embed = new EmbedBuilder()
     .setColor(COLOR.INFO)
     .setTitle(`📊 Stats — ${displayName}`)
-    .setThumbnail(`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${favChamp ?? 'Lux'}_0.jpg`)
+    .setThumbnail(`https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${formatChampionName(favChamp) ?? 'Lux'}_0.jpg`)
     .setTimestamp();
 
   if (!stats) {
@@ -150,7 +152,7 @@ async function handleStats(message, args, { db, statsService }) {
       { name: '🏆 Winrate', value: `**${stats.winrate.toFixed(1)}%**`, inline: true },
       { name: '🌾 Avg CS', value: `**${stats.avg_cs.toFixed(1)}**`, inline: true },
       { name: '💥 Avg Damage', value: `**${Math.round(stats.avg_damage).toLocaleString()}**`, inline: true },
-      { name: '🎯 Favorite Champion', value: `**${favChamp ?? 'Unknown'}**`, inline: true },
+      { name: '🎯 Favorite Champion', value: `**${formatChampionName(favChamp) ?? 'Unknown'}**`, inline: true },
       { name: '📈 Current Streak', value: streakText(streak), inline: true }
     );
   }
@@ -159,7 +161,7 @@ async function handleStats(message, args, { db, statsService }) {
 }
 
 /**
- * !last [@user]
+ * /lol last [@user]
  * Show the most recent match for a user.
  */
 async function handleLast(message, args, { db }) {
@@ -168,7 +170,7 @@ async function handleLast(message, args, { db }) {
 
   if (!user || !user.puuid) {
     const hint = target.id === message.author.id
-      ? 'Use `!add GameName#TAG` to link your Riot account first.'
+      ? 'Use `/lol add GameName#TAG` to link your Riot account first.'
       : `${target.username} hasn't linked a Riot account yet.`;
     return message.reply({ embeds: [errorEmbed(hint)] });
   }
@@ -196,8 +198,9 @@ async function handleLast(message, args, { db }) {
   const embed = new EmbedBuilder()
     .setColor(color)
     .setTitle(`${match.win === 1 ? '✅' : '❌'} Last Game — ${displayName}`)
-    .setDescription(`**${result}** on **${match.champion}** • ${playedAt}`)
+    .setDescription(`**${result}** on **${formatChampionName(match.champion)}** • ${playedAt}`)
     .addFields(
+      { name: 'Queue', value: `${await getQueueDescription(match.queue_id)}`, inline: true },
       { name: 'K/D/A', value: `**${match.kills}/${match.deaths}/${match.assists}**`, inline: true },
       { name: 'Damage', value: `**${(match.damage || 0).toLocaleString()}**`, inline: true },
       { name: 'CS', value: `**${match.cs}**`, inline: true },
@@ -210,7 +213,7 @@ async function handleLast(message, args, { db }) {
 }
 
 /**
- * !top
+ * /lol top
  * Show server-wide rankings across all categories.
  */
 async function handleTop(message, args, { statsService }) {
@@ -223,7 +226,7 @@ async function handleTop(message, args, { statsService }) {
       embeds: [
         infoEmbed(
           'No data yet',
-          'No users have linked their accounts or no matches have been synced yet.\nUse `!add GameName#TAG` to get started.'
+          'No users have linked their accounts or no matches have been synced yet.\nUse `/lol add GameName#TAG` to get started.'
         ),
       ],
     });
@@ -240,7 +243,7 @@ async function handleTop(message, args, { statsService }) {
   const embed = new EmbedBuilder()
     .setColor(COLOR.GOLD)
     .setTitle('🏆 Server Rankings')
-    .setDescription('Top players across all tracked stats (last 20 games each)')
+    .setDescription('Top players across all tracked stats (last 100 games each)')
     .addFields(
       // ── Competitive categories ──
       {
@@ -349,7 +352,7 @@ async function handleCommand(message, services) {
         break;
     }
   } catch (err) {
-    console.error(`[commands] Unhandled error in !${command}:`, err);
+    console.error(`[commands] Unhandled error in /lol ${command}:`, err);
     try {
       await message.reply({
         embeds: [errorEmbed('An unexpected error occurred. Please try again later.')],

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { formatChampionName } from '../utils/championName.js';
 
 const DDRAGON = 'https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion';
 
@@ -28,8 +29,8 @@ export default function Home() {
             {u.favoriteChampion ? (
               <img
                 className="champ-img"
-                src={`${DDRAGON}/${u.favoriteChampion}.png`}
-                alt={u.favoriteChampion}
+                src={`${DDRAGON}/${formatChampionName(u.favoriteChampion)}.png`}
+                alt={formatChampionName(u.favoriteChampion)}
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
             ) : (

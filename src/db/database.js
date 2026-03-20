@@ -44,6 +44,7 @@ db.exec(`
     vision_score INTEGER,
     game_duration INTEGER,
     timestamp INTEGER,
+    queue_id INTEGER,
     UNIQUE(match_id, puuid)
   );
 
@@ -57,6 +58,13 @@ db.exec(`
     updated_at INTEGER
   );
 `);
+
+// ─── Migrations ────────────────────────────────────────────────────────────
+
+const existingColumns = db.pragma('table_info(matches)').map((c) => c.name);
+if (!existingColumns.includes('queue_id')) {
+  db.exec('ALTER TABLE matches ADD COLUMN queue_id INTEGER');
+}
 
 // Create indexes for common queries
 db.exec(`
@@ -84,9 +92,9 @@ const stmts = {
   getAllUsers: db.prepare('SELECT * FROM users WHERE puuid IS NOT NULL'),
   addMatch: db.prepare(`
     INSERT OR IGNORE INTO matches
-      (match_id, puuid, champion, kills, deaths, assists, win, damage, cs, vision_score, game_duration, timestamp)
+      (match_id, puuid, champion, kills, deaths, assists, win, damage, cs, vision_score, game_duration, timestamp, queue_id)
     VALUES
-      (@match_id, @puuid, @champion, @kills, @deaths, @assists, @win, @damage, @cs, @vision_score, @game_duration, @timestamp)
+      (@match_id, @puuid, @champion, @kills, @deaths, @assists, @win, @damage, @cs, @vision_score, @game_duration, @timestamp, @queue_id)
   `),
   getMatchesByPuuid: db.prepare(
     'SELECT * FROM matches WHERE puuid = ? ORDER BY timestamp DESC LIMIT ?'
