@@ -1,0 +1,331 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --gold: #c89b3c;
+  --gold-light: #f0e6b2;
+  --bg: #0a0e1a;
+  --bg-card: #0f1623;
+  --bg-card2: #16202e;
+  --border: #1e2d40;
+  --text: #c8d4e0;
+  --text-muted: #5a7fa0;
+  --win: #2ecc71;
+  --loss: #e74c3c;
+  --radius: 10px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 56px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.nav a:hover { color: var(--text); }
+.nav a.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+/* ── Layout ── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── Loading / Error ── */
+.state-box {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* ── Section title ── */
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Player grid ── */
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.player-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.player-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.player-card .champ-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  object-fit: cover;
+}
+
+.player-card .champ-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg-card2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.player-card .player-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gold-light);
+}
+
+.player-card .player-tag {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.player-card .mini-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.player-card .mini-stats span strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ── Player detail page ── */
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.player-header .champ-art {
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius);
+  border: 2px solid var(--gold);
+  object-fit: cover;
+}
+
+.player-header .player-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.player-header .player-sub {
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-card .stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.stat-card .stat-value.win { color: var(--win); }
+.stat-card .stat-value.loss { color: var(--loss); }
+
+/* ── Match history table ── */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 0.75rem;
+}
+
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.match-row {
+  display: grid;
+  grid-template-columns: 6rem 5fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.match-row.win-row { border-left: 3px solid var(--win); }
+.match-row.loss-row { border-left: 3px solid var(--loss); }
+
+.match-row .result-badge {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.match-row .result-badge.win { color: var(--win); }
+.match-row .result-badge.loss { color: var(--loss); }
+
+.match-row .champ-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.match-row .kda {
+  font-weight: 600;
+  color: var(--gold-light);
+}
+
+.match-row .meta {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* ── Rankings ── */
+.rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.rank-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+}
+
+.rank-card .rank-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  margin-bottom: 0.75rem;
+}
+
+.rank-entry {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rank-entry:last-child { border-bottom: none; }
+
+.rank-entry .medal { font-size: 1.1rem; width: 1.5rem; }
+
+.rank-entry .rank-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.rank-entry .rank-value {
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* ── Back link ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  transition: color 0.15s;
+}
+
+.back-link:hover { color: var(--gold); }
