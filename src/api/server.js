@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const db = require('../db/database');
 const statsService = require('../services/statsService');
+const matchService = require("../services/matchService");
 
 const app = express();
 const PORT = process.env.API_PORT || 3001;
@@ -44,6 +45,12 @@ app.get('/api/last/:discordId', (req, res) => {
 app.get('/api/top', (req, res) => {
   const rankings = statsService.getRankings();
   res.json(rankings);
+});
+
+app.get('/api/refresh', (req, res) => {
+  matchService.syncAllUsers();
+
+  res.json({ message: 'Match data refresh initiated' });
 });
 
 app.listen(PORT, () => {
